@@ -1,4 +1,4 @@
-build
+build/*
 install
 *.o
 *.sublime-workspace
