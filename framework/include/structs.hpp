@@ -44,4 +44,19 @@ struct shader_program {
   // uniform locations mapped to name
   std::map<std::string, GLint> u_locs{};
 };
+
+//Planets for the Solarsystem
+struct Planet{
+  
+  Planet():
+  size(),
+  rotation_speed(),
+  distance() // to origin
+  {}
+
+  Planet(double size_in, double rotation_speed_in, double distance_in) : size(size_in), rotation_speed(rotation_speed_in), distance(distance_in){}
+  double size;
+  double rotation_speed;
+  double distance;
+};
 #endif
