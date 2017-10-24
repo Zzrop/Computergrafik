@@ -49,14 +49,14 @@ struct shader_program {
 struct Planet{
 
   Planet():
-  size(),
-  rotation_speed(),
-  distance() // to origin
+  size(1.0f),
+  rotation_speed(1.0f),
+  distance(1.0f) // to origin
   {}
 
-  Planet(double size_in, double rotation_speed_in, double distance_in) : size(size_in), rotation_speed(rotation_speed_in), distance(distance_in){}
-  double size;
-  double rotation_speed;
-  double distance;
+  Planet(float size_in, float rotation_speed_in, float distance_in) : size(size_in), rotation_speed(rotation_speed_in), distance(distance_in){}
+  float size;
+  float rotation_speed;
+  float distance;
 };
 #endif

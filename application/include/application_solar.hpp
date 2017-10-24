@@ -15,8 +15,8 @@ class ApplicationSolar : public Application {
   // free allocated objects
   ~ApplicationSolar();
 
-  //loading planet-vector from structs
-  //void load_planets();
+  //uploading the normal and model matrix
+  void upload_planet_transforms(Planet const& temp_planet) const;
   // update uniform locations and values
   void uploadUniforms();
   // update projection matrix
