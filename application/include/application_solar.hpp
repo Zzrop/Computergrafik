@@ -17,6 +17,8 @@ class ApplicationSolar : public Application {
 
   //uploading the normal and model matrix
   void upload_planet_transforms(Planet const& temp_planet) const;
+  //uploading moon to planet
+  void upload_moon_transforms(Planet const& temp_planet) const;
   // update uniform locations and values
   void uploadUniforms();
   // update projection matrix
@@ -36,7 +38,7 @@ class ApplicationSolar : public Application {
 
   // cpu representation of model
   model_object planet_object;
-  std::vector<Planet> planets;
+  std::map<std::string, Planet> planets;
 };
 
 #endif

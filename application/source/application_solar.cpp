@@ -24,10 +24,14 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
  ,planet_object{}
  ,planets{}
 {
+  Planet Sun(1.25f, 0.0f, 0.0f);
   Planet Merkur(0.383f, 3.012f, 0.387f);
-  planets.push_back(Merkur);
-  Planet p1(0.950f, 1.177f, 0.723f);
-  planets.push_back(p1);
+  Planet Venus(0.950f, 1.177f, 0.723f);
+  Planet Erde(1.0f, 1.0f, 1.0f);
+  planets["Sun"] = Sun;
+  planets["Merkur"] = Merkur;
+  planets["Venus"] = Venus;
+  planets["Erde"] = Erde;
   initializeGeometry();
   initializeShaderPrograms();
 }
@@ -43,14 +47,24 @@ void ApplicationSolar::render() const {
   // bind shader to upload uniforms
   glUseProgram(m_shaders.at("planet").handle);
 
-  for (Planet i: planets)
+  for (auto i: planets)
   {
-    upload_planet_transforms(i);
-    // bind the VAO to draw
-  glBindVertexArray(planet_object.vertex_AO);
 
-  // draw bound vertex array using bound shader
-  glDrawElements(planet_object.draw_mode, planet_object.num_elements, model::INDEX.type, NULL);
+    upload_planet_transforms(i.second);
+    // bind the VAO to draw
+    glBindVertexArray(planet_object.vertex_AO);
+
+    // draw bound vertex array using bound shader
+    glDrawElements(planet_object.draw_mode, planet_object.num_elements, model::INDEX.type, NULL);
+    if (i.first == "Erde")
+    {
+      upload_moon_transforms(i.second);
+      glBindVertexArray(planet_object.vertex_AO);
+
+      // draw bound vertex array using bound shader
+      glDrawElements(planet_object.draw_mode, planet_object.num_elements, model::INDEX.type, NULL);
+    }
+
   }
 
 
@@ -75,12 +89,30 @@ void ApplicationSolar::render() const {
 */
 }
 
+void ApplicationSolar::upload_moon_transforms(Planet const& host)const{
+  std::cout<<"Mooooon!\n";
+  glm::fmat4 model_matrix = glm::scale(glm::fmat4{}, glm::fvec3{host.size, host.size, host.size});
+  model_matrix = glm::rotate(model_matrix, float(glfwGetTime()*host.rotation_speed), glm::fvec3{0.0f, 1.0f, 0.0f});
+  model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, host.distance});
+
+  Planet Mond(0.25f, 9.815f, 1.2f);
+  model_matrix = glm::scale(model_matrix, glm::fvec3{Mond.size, Mond.size, Mond.size});
+  model_matrix = glm::rotate(model_matrix, float(glfwGetTime()*Mond.rotation_speed), glm::fvec3{0.0f, 1.0f, 0.0f});
+  model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, Mond.distance});
+  glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("ModelMatrix"),
+                     1, GL_FALSE, glm::value_ptr(model_matrix));
+
+  // extra matrix for normal transformation to keep them orthogonal to surface
+  glm::fmat4 normal_matrix = glm::inverseTranspose(glm::inverse(m_view_transform) * model_matrix);
+  glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("NormalMatrix"),
+                     1, GL_FALSE, glm::value_ptr(normal_matrix));
+}
 
 void ApplicationSolar::upload_planet_transforms(Planet const& temp_planet)const {
 
 
-  glm::fmat4 model_matrix = glm::rotate(glm::fmat4{}, float(glfwGetTime()*temp_planet.rotation_speed), glm::fvec3{0.0f, 1.0f, 0.0f});
-  model_matrix = glm::scale(model_matrix, glm::fvec3{temp_planet.size, temp_planet.size, temp_planet.size});
+  glm::fmat4 model_matrix = glm::scale(glm::fmat4{}, glm::fvec3{temp_planet.size, temp_planet.size, temp_planet.size});
+  model_matrix = glm::rotate(model_matrix, float(glfwGetTime()*temp_planet.rotation_speed), glm::fvec3{0.0f, 1.0f, 0.0f});
   model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, temp_planet.distance});
   glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("ModelMatrix"),
                      1, GL_FALSE, glm::value_ptr(model_matrix));
