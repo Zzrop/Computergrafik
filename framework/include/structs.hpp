@@ -3,7 +3,7 @@
 
 #include <map>
 #include <glbinding/gl/gl.h>
-// use gl definitions from glbinding 
+// use gl definitions from glbinding
 using namespace gl;
 
 // gpu representation of model
@@ -37,8 +37,8 @@ struct shader_program {
    {}
 
   // path to shader source
-  std::string vertex_path; 
-  std::string fragment_path; 
+  std::string vertex_path;
+  std::string fragment_path;
   // object handle
   GLuint handle;
   // uniform locations mapped to name
@@ -47,7 +47,7 @@ struct shader_program {
 
 //Planets for the Solarsystem
 struct Planet{
-  
+
   Planet():
   size(),
   rotation_speed(),

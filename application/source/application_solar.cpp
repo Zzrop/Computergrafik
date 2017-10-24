@@ -22,10 +22,17 @@ using namespace gl;
 ApplicationSolar::ApplicationSolar(std::string const& resource_path)
  :Application{resource_path}
  ,planet_object{}
+ ,planets{}
 {
   initializeGeometry();
   initializeShaderPrograms();
 }
+
+/*void ApplicationSolar::load_planets() const {
+
+
+
+}*/
 
 void ApplicationSolar::render() const {
   // bind shader to upload uniforms

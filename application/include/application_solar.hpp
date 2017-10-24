@@ -1,6 +1,8 @@
 #ifndef APPLICATION_SOLAR_HPP
 #define APPLICATION_SOLAR_HPP
 
+#include <vector>
+
 #include "application.hpp"
 #include "model.hpp"
 #include "structs.hpp"
@@ -13,6 +15,8 @@ class ApplicationSolar : public Application {
   // free allocated objects
   ~ApplicationSolar();
 
+  //loading planet-vector from structs
+  //void load_planets();
   // update uniform locations and values
   void uploadUniforms();
   // update projection matrix
@@ -32,6 +36,7 @@ class ApplicationSolar : public Application {
 
   // cpu representation of model
   model_object planet_object;
+  std::vector<Planet> planets;
 };
 
 #endif
