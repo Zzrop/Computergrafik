@@ -28,10 +28,20 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   Planet Merkur(0.383f, 3.012f, 0.387f);
   Planet Venus(0.950f, 1.177f, 0.723f);
   Planet Erde(1.0f, 1.0f, 1.0f);
+  Planet Mars(0.583f, 0.53f, 1.524f);
+  Planet Jupiter(10.97f, 0.084f, 5.2f);
+  Planet Saturn(9.14f, 0.0339f, 9.54f);
+  Planet Uranus(3.98f, 0.0119f, 19.19f);
+  Planet Neptun(3.87f, 0.006f, 30.1f);
   planets["Sun"] = Sun;
   planets["Merkur"] = Merkur;
   planets["Venus"] = Venus;
   planets["Erde"] = Erde;
+  planets["Mars"] = Mars;
+  planets["Jupiter"] = Jupiter;
+  planets["Saturn"] = Saturn;
+  planets["Uranus"] = Uranus;
+  planets["Neptun"] = Neptun;
   initializeGeometry();
   initializeShaderPrograms();
 }
@@ -90,12 +100,12 @@ void ApplicationSolar::render() const {
 }
 
 void ApplicationSolar::upload_moon_transforms(Planet const& host)const{
-  std::cout<<"Mooooon!\n";
+  //std::cout<<"Mooooon!\n";
   glm::fmat4 model_matrix = glm::scale(glm::fmat4{}, glm::fvec3{host.size, host.size, host.size});
   model_matrix = glm::rotate(model_matrix, float(glfwGetTime()*host.rotation_speed), glm::fvec3{0.0f, 1.0f, 0.0f});
   model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, host.distance});
 
-  Planet Mond(0.25f, 9.815f, 1.2f);
+  Planet Mond(1.0f, 9.815f, 0.7f); //Vorsicht! Anpassungen im planeten-struct vervielfachen sich!
   model_matrix = glm::scale(model_matrix, glm::fvec3{Mond.size, Mond.size, Mond.size});
   model_matrix = glm::rotate(model_matrix, float(glfwGetTime()*Mond.rotation_speed), glm::fvec3{0.0f, 1.0f, 0.0f});
   model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, Mond.distance});
