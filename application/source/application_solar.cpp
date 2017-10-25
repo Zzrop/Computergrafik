@@ -24,7 +24,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
  ,planet_object{}
  ,planets{}
 {
-  Planet Sun(1.25f, 0.0f, 0.0f);
+  Planet Sun(1.0f, 0.0f, 0.0f);
   Planet Merkur(0.383f, 3.012f, 0.387f);
   Planet Venus(0.950f, 1.177f, 0.723f);
   Planet Erde(1.0f, 1.0f, 1.0f);
@@ -105,7 +105,7 @@ void ApplicationSolar::upload_moon_transforms(Planet const& host)const{
   model_matrix = glm::rotate(model_matrix, float(glfwGetTime()*host.rotation_speed), glm::fvec3{0.0f, 1.0f, 0.0f});
   model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, host.distance});
 
-  Planet Mond(1.0f, 9.815f, 0.7f); //Vorsicht! Anpassungen im planeten-struct vervielfachen sich!
+  Planet Mond(2.0f, 9.815f, 1.0f); //Vorsicht! Anpassungen im planeten-struct vervielfachen sich!
   model_matrix = glm::scale(model_matrix, glm::fvec3{Mond.size, Mond.size, Mond.size});
   model_matrix = glm::rotate(model_matrix, float(glfwGetTime()*Mond.rotation_speed), glm::fvec3{0.0f, 1.0f, 0.0f});
   model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, Mond.distance});

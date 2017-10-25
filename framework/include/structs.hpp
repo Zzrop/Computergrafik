@@ -54,7 +54,7 @@ struct Planet{
   distance(1.0f) // to origin
   {}
 
-  Planet(float size_in, float rotation_speed_in, float distance_in) : size(size_in/8), rotation_speed(rotation_speed_in), distance(distance_in*7){} // Anpassungen für die verhältnissmäßigkeit der Größen wurden vorgenommen
+  Planet(float size_in, float rotation_speed_in, float distance_in) : size(size_in/9), rotation_speed(rotation_speed_in*1), distance(distance_in*9){} // Anpassungen für die verhältnissmäßigkeit der Größen wurden vorgenommen
   float size;
   float rotation_speed;
   float distance;
