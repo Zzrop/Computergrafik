@@ -46,6 +46,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   initializeGeometry();
   initializeShaderPrograms();
 
+  //Erstellung eines Sterne-Vektors mit positions und farbabgaben
   std::vector<float> Stars;
   for (int i = 0; i < 1000; ++i)
   {
@@ -63,10 +64,12 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
     Stars.push_back(g);
     Stars.push_back(b);
 
-    printf("%s\n", Stars );
   }
 
-  float stars [6000];
+/*  for (std::vector<float>::const_iterator i = Stars.begin(); i != Stars.end(); ++i)
+      std::cout << *i << ' ';*/
+
+//  float stars [6000];
 
 }
 
