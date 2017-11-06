@@ -18,6 +18,7 @@ using namespace gl;
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
+#include <vector>
 
 ApplicationSolar::ApplicationSolar(std::string const& resource_path)
  :Application{resource_path}
@@ -44,6 +45,29 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   planets["Neptun"] = Neptun;
   initializeGeometry();
   initializeShaderPrograms();
+
+  std::vector<float> Stars;
+  for (int i = 0; i < 1000; ++i)
+  {
+    float pos_x = 10 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1000-10)));
+    float pos_y = 10 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1000-10)));
+    float pos_z = 10 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1000-10)));
+    float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+
+    Stars.push_back(pos_x);
+    Stars.push_back(pos_y);
+    Stars.push_back(pos_z);
+    Stars.push_back(r);
+    Stars.push_back(g);
+    Stars.push_back(b);
+
+    printf("%s\n", Stars );
+  }
+
+  float stars [6000];
+
 }
 
 /*void ApplicationSolar::load_planets() const {
