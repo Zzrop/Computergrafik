@@ -43,8 +43,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   planets["Saturn"] = Saturn;
   planets["Uranus"] = Uranus;
   planets["Neptun"] = Neptun;
-  initializeGeometry();
-  initializeShaderPrograms();
+
 
   //Erstellung eines Sterne-Vektors mit positions und farbabgaben
   std::vector<float> Stars;
@@ -66,11 +65,15 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
   }
 
-/*  for (std::vector<float>::const_iterator i = Stars.begin(); i != Stars.end(); ++i)
-      std::cout << *i << ' ';*/
-
-//  float stars [6000];
-
+    float* stars = Stars.data();
+/*
+    for (int i = 0; i<6000;++i)
+    {
+        std::cout << stars[i] << std::endl;
+    }
+*/
+  initializeGeometry();
+  initializeShaderPrograms();
 }
 
 /*void ApplicationSolar::load_planets() const {
@@ -101,6 +104,8 @@ void ApplicationSolar::render() const {
       // draw bound vertex array using bound shader
       glDrawElements(planet_object.draw_mode, planet_object.num_elements, model::INDEX.type, NULL);
     }
+
+
 
   }
 
