@@ -32,11 +32,13 @@ class ApplicationSolar : public Application {
   void render() const;
 
  protected:
+  void initializeGeometryStars();
   void initializeShaderPrograms();
   void initializeGeometry();
   void updateView();
 
   // cpu representation of model
+  model_object star_object;
   model_object planet_object;
   std::map<std::string, Planet> planets;
   std::vector<float> Stars;

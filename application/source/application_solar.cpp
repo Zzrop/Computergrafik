@@ -65,7 +65,8 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
   }
 
-    float* stars = Stars.data();
+    //float* stars = Stars.data();
+
 /*
     for (int i = 0; i<6000;++i)
     {
@@ -73,7 +74,11 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
     }
 */
   initializeGeometry();
+  initializeGeometryStars();
   initializeShaderPrograms();
+
+
+
 }
 
 /*void ApplicationSolar::load_planets() const {
@@ -105,6 +110,11 @@ void ApplicationSolar::render() const {
       glDrawElements(planet_object.draw_mode, planet_object.num_elements, model::INDEX.type, NULL);
     }
 
+    glUseProgram(m_shaders.at("stars").handle);
+
+    glBindVertexArray(star_object.vertex_AO);
+
+    glDrawArrays(star_object.draw_mode, NULL, 1000);
 
 
   }
@@ -217,6 +227,10 @@ void ApplicationSolar::initializeShaderPrograms() {
   m_shaders.at("planet").u_locs["ModelMatrix"] = -1;
   m_shaders.at("planet").u_locs["ViewMatrix"] = -1;
   m_shaders.at("planet").u_locs["ProjectionMatrix"] = -1;
+
+  m_shaders.emplace("stars", shader_program{m_resource_path + "shaders/stars.vert",
+                                          m_resource_path + "shaders/stars.frag"});
+
 }
 
 // load models
@@ -256,6 +270,33 @@ void ApplicationSolar::initializeGeometry() {
   // transfer number of indices to model object
   planet_object.num_elements = GLsizei(planet_model.indices.size());
 }
+
+  void ApplicationSolar::initializeGeometryStars(){
+
+    glGenVertexArrays(1, &star_object.vertex_AO);
+
+    glBindVertexArray(star_object.vertex_AO);
+
+    glGenBuffers(1, &star_object.vertex_BO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, star_object.vertex_BO);
+
+    glBufferData(GL_ARRAY_BUFFER, (sizeof(float)*(Stars.size())), Stars.data(), GL_STATIC_DRAW);
+
+    // activate first attribute on gpu
+    glEnableVertexAttribArray(0);
+    // first attribute is 3 floats with no offset & stride
+    glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,(3*sizeof(float)),0);
+    // activate first attribute on gpu
+    glEnableVertexAttribArray(1);
+    // first attribute is 3 floats with no offset & stride
+    //glVertexAttribPointer(1,3,GL_FLOAT, GL_FALSE,(3*sizeof(float)),(3*sizeof(float)));
+    glVertexAttribPointer(1,3,GL_FLOAT, GL_FALSE,(3*sizeof(float)),0);
+
+    star_object.draw_mode = GL_POINTS;
+
+  }
+
 
 ApplicationSolar::~ApplicationSolar() {
   glDeleteBuffers(1, &planet_object.vertex_BO);
