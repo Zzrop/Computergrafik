@@ -39,6 +39,7 @@ class ApplicationSolar : public Application {
   // cpu representation of model
   model_object planet_object;
   std::map<std::string, Planet> planets;
+  std::vector<float> Stars;
 };
 
 #endif

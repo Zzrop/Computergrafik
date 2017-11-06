@@ -24,6 +24,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
  :Application{resource_path}
  ,planet_object{}
  ,planets{}
+ ,Stars{}
 {
   Planet Sun(1.0f, 0.0f, 0.0f);
   Planet Merkur(0.383f, 3.012f, 0.387f);
@@ -46,7 +47,6 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
 
   //Erstellung eines Sterne-Vektors mit positions und farbabgaben
-  std::vector<float> Stars;
   for (int i = 0; i < 1000; ++i)
   {
     float pos_x = 10 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1000-10)));
