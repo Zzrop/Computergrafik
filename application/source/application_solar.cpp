@@ -47,18 +47,18 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
 
   //Erstellung eines Sterne-Vektors mit positions und farbangaben
-  Stars_num = 20000;
+  Stars_num = 200000;
   for (int i = 0; i < Stars_num; ++i)
   {
     float pos_x = (1.0f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(20-1))))-10.0f;
     float pos_y = (1.0f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(20-1))))-10.0f;
     float pos_z = (1.0f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(20-1))))-10.0f;
-    //float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    float r = 1.0;
-    //float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    float g = 0.0;
-    //float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    float b = 0.0;
+    float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    //float r = 1.0;
+    float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    //float g = 0.0;
+    float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    //float b = 0.0;
 
     Stars.push_back(pos_x);
     Stars.push_back(pos_y);
@@ -296,12 +296,12 @@ void ApplicationSolar::initializeGeometry() {
     // activate first attribute on gpu
     glEnableVertexAttribArray(0);
     // first attribute is 3 floats with no offset & stride
-    glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,(3*sizeof(float)),0);
+    glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE,(6*sizeof(float)),0);
     // activate first attribute on gpu
     glEnableVertexAttribArray(1);
     // first attribute is 3 floats with no offset & stride
     //glVertexAttribPointer(1,3,GL_FLOAT, GL_FALSE,(3*sizeof(float)),(3*sizeof(float)));
-    glVertexAttribPointer(1,3,GL_FLOAT, GL_FALSE,(3*sizeof(float)),0);
+    glVertexAttribPointer(1,3,GL_FLOAT, GL_FALSE,(6*sizeof(float)),(GLvoid*)uintptr_t(sizeof(float)*3));
 
     star_object.draw_mode = GL_POINTS;
 
