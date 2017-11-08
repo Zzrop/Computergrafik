@@ -53,9 +53,12 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
     float pos_x = (1.0f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(20-1))))-10.0f;
     float pos_y = (1.0f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(20-1))))-10.0f;
     float pos_z = (1.0f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(20-1))))-10.0f;
-    float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-    float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    //float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    float r = 1.0;
+    //float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    float g = 0.0;
+    //float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+    float b = 0.0;
 
     Stars.push_back(pos_x);
     Stars.push_back(pos_y);
