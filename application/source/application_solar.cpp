@@ -76,9 +76,9 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
     {
         std::cout << stars[i] << std::endl;
     }*/
-
+/*
   for (std::vector<float>::const_iterator i = Stars.begin(); i != Stars.end(); ++i)
-      std::cout << *i << ' ';
+      std::cout << *i << ' ';*/
 
   initializeGeometry();
   initializeGeometryStars();
