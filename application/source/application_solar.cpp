@@ -46,12 +46,13 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   planets["Neptun"] = Neptun;
 
 
-  //Erstellung eines Sterne-Vektors mit positions und farbabgaben
-  for (int i = 0; i < 1000; ++i)
+  //Erstellung eines Sterne-Vektors mit positions und farbangaben
+  Stars_num = 20000;
+  for (int i = 0; i < Stars_num; ++i)
   {
-    float pos_x = 10 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1000-10)));
-    float pos_y = 10 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1000-10)));
-    float pos_z = 10 + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(1000-10)));
+    float pos_x = (1.0f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(20-1))))-10.0f;
+    float pos_y = (1.0f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(20-1))))-10.0f;
+    float pos_z = (1.0f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(20-1))))-10.0f;
     float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
     float g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
     float b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -65,14 +66,17 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
   }
 
-    //float* stars = Stars.data();
+//    float* stars = Stars.data();
 
-/*
-    for (int i = 0; i<6000;++i)
+
+/*    for (int i = 0; i<6000;++i)
     {
         std::cout << stars[i] << std::endl;
-    }
-*/
+    }*/
+
+  for (std::vector<float>::const_iterator i = Stars.begin(); i != Stars.end(); ++i)
+      std::cout << *i << ' ';
+
   initializeGeometry();
   initializeGeometryStars();
   initializeShaderPrograms();
@@ -88,6 +92,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 }*/
 
 void ApplicationSolar::render() const {
+
 
   // bind shader to upload uniforms
   glUseProgram(m_shaders.at("planet").handle);
@@ -110,14 +115,13 @@ void ApplicationSolar::render() const {
       glDrawElements(planet_object.draw_mode, planet_object.num_elements, model::INDEX.type, NULL);
     }
 
-    glUseProgram(m_shaders.at("stars").handle);
-
-    glBindVertexArray(star_object.vertex_AO);
-
-    glDrawArrays(star_object.draw_mode, NULL, 1000);
-
-
   }
+
+  glUseProgram(m_shaders.at("stars").handle);
+
+  glBindVertexArray(star_object.vertex_AO);
+
+  glDrawArrays(star_object.draw_mode, 0, Stars_num);
 
 
 /*
@@ -219,6 +223,10 @@ void ApplicationSolar::mouseCallback(double pos_x, double pos_y) {
 
 // load shader programs
 void ApplicationSolar::initializeShaderPrograms() {
+  m_shaders.emplace("stars", shader_program{m_resource_path + "shaders/stars.vert",
+                                          m_resource_path + "shaders/stars.frag"});
+//  m_shaders.at("stars").u_locs["ViewMatrix"] = -1;
+//  m_shaders.at("stars").u_locs["ProjectionMatrix"] = -1;
   // store shader program objects in container
   m_shaders.emplace("planet", shader_program{m_resource_path + "shaders/simple.vert",
                                            m_resource_path + "shaders/simple.frag"});
@@ -228,8 +236,7 @@ void ApplicationSolar::initializeShaderPrograms() {
   m_shaders.at("planet").u_locs["ViewMatrix"] = -1;
   m_shaders.at("planet").u_locs["ProjectionMatrix"] = -1;
 
-  m_shaders.emplace("stars", shader_program{m_resource_path + "shaders/stars.vert",
-                                          m_resource_path + "shaders/stars.frag"});
+
 
 }
 
@@ -295,13 +302,16 @@ void ApplicationSolar::initializeGeometry() {
 
     star_object.draw_mode = GL_POINTS;
 
+
   }
 
 
 ApplicationSolar::~ApplicationSolar() {
   glDeleteBuffers(1, &planet_object.vertex_BO);
+  glDeleteBuffers(1, &star_object.vertex_BO);
   glDeleteBuffers(1, &planet_object.element_BO);
   glDeleteVertexArrays(1, &planet_object.vertex_AO);
+  glDeleteVertexArrays(1, &star_object.vertex_AO);
 }
 
 // exe entry point

@@ -1,8 +1,8 @@
 #version 150
 
-in vec3 pass_Color;
-out vec4 out_Color;
+in  vec3 pass_Color;
+out vec4 out_Colorx;
 
 void main() {
-  out_Color = vec4(abs(normalize(pass_Color)), 1.0);
+  out_Colorx = vec4(pass_Color, 1.0);
 }

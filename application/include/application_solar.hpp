@@ -42,6 +42,7 @@ class ApplicationSolar : public Application {
   model_object planet_object;
   std::map<std::string, Planet> planets;
   std::vector<float> Stars;
+  int Stars_num;
 };
 
 #endif
