@@ -24,7 +24,9 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
  :Application{resource_path}
  ,planet_object{}
  ,planets{}
+ ,Planet_Colors{}
  ,Stars{}
+
 {
   Planet Sun(1.0f, 0.0f, 0.0f);
   Planet Merkur(0.383f, 3.012f, 0.387f);
@@ -44,6 +46,29 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   planets["Saturn"] = Saturn;
   planets["Uranus"] = Uranus;
   planets["Neptun"] = Neptun;
+
+  //Default-Planeten-Farbe
+  Color Sun_c(1.0f,1.0f,0.0f);
+  Color Merkur_c(0.863f,0.863f,0.863f);
+  Color Venus_c(0.957f,0.643f,0.376f);
+  Color Erde_c(0.0f,0.0f,1.0f);
+  Color Mars_c(1.0f,0.0f,0.0f);
+  Color Jupiter_c(0.275f,0.510f,0.706f);
+  Color Saturn_c(0.502f,0.502f,0.0f);
+  Color Uranus_c(0.118f,0.565f,1.0f);
+  Color Neptun_c(0.0f,0.749f,1.0f);
+  Color Mond_c(0.863f,0.863f,0.863f);
+
+  Planet_Colors["Sun"] = Sun_c;
+  Planet_Colors["Merkur"] = Merkur_c;
+  Planet_Colors["Venus"] = Venus_c;
+  Planet_Colors["Erde"] = Erde_c;
+  Planet_Colors["Mars"] = Mars_c;
+  Planet_Colors["Jupiter"] = Jupiter_c;
+  Planet_Colors["Saturn"] = Saturn_c;
+  Planet_Colors["Uranus"] = Uranus_c;
+  Planet_Colors["Neptun"] = Neptun_c;
+  Planet_Colors["Mond"] = Mond_c;
 
 
   //Erstellung eines Sterne-Vektors mit positions und farbangaben
@@ -79,11 +104,12 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 /*
   for (std::vector<float>::const_iterator i = Stars.begin(); i != Stars.end(); ++i)
       std::cout << *i << ' ';*/
+  std::cout << "Im working!";
 
   initializeGeometry();
   initializeGeometryStars();
   initializeShaderPrograms();
-
+  //color_planets(r,g,b);
 
 
 }
@@ -94,6 +120,13 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
 }*/
 
+void ApplicationSolar::color_planets(Color const& rgb) const {
+
+  glUniform3f(m_shaders.at("planet").u_locs.at("PlanetColor"), rgb.r, rgb.g, rgb.b);
+
+}
+
+
 void ApplicationSolar::render() const {
 
 
@@ -102,8 +135,9 @@ void ApplicationSolar::render() const {
 
   for (auto i: planets)
   {
-
+//    std::cout <<Planet_Colors[i.first].r;
     upload_planet_transforms(i.second);
+    color_planets(Planet_Colors.at(i.first));
     // bind the VAO to draw
     glBindVertexArray(planet_object.vertex_AO);
 
@@ -112,6 +146,8 @@ void ApplicationSolar::render() const {
     if (i.first == "Erde")
     {
       upload_moon_transforms(i.second);
+      color_planets(Planet_Colors.at("Mond"));
+
       glBindVertexArray(planet_object.vertex_AO);
 
       // draw bound vertex array using bound shader
@@ -180,6 +216,7 @@ void ApplicationSolar::upload_planet_transforms(Planet const& temp_planet)const 
   glm::fmat4 normal_matrix = glm::inverseTranspose(glm::inverse(m_view_transform) * model_matrix);
   glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("NormalMatrix"),
                      1, GL_FALSE, glm::value_ptr(normal_matrix));
+//  glUniform3f(m_shaders.at("planet").u_locs.at("PlanetColor"), 1.0, 0.0, 0.0);
 }
 
 void ApplicationSolar::updateView() {
@@ -238,6 +275,7 @@ void ApplicationSolar::initializeShaderPrograms() {
   m_shaders.at("planet").u_locs["ModelMatrix"] = -1;
   m_shaders.at("planet").u_locs["ViewMatrix"] = -1;
   m_shaders.at("planet").u_locs["ProjectionMatrix"] = -1;
+  m_shaders.at("planet").u_locs["PlanetColor"] = -1;
 
 
 

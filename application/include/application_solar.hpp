@@ -28,6 +28,8 @@ class ApplicationSolar : public Application {
   //handle delta mouse movement input
   void mouseCallback(double pos_x, double pos_y);
 
+  void color_planets(Color const& rgb) const;
+
   // draw all objects
   void render() const;
 
@@ -41,6 +43,7 @@ class ApplicationSolar : public Application {
   model_object star_object;
   model_object planet_object;
   std::map<std::string, Planet> planets;
+  std::map<std::string, Color> Planet_Colors;
   std::vector<float> Stars;
   int Stars_num;
 };

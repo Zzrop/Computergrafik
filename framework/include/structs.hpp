@@ -59,4 +59,17 @@ struct Planet{
   float rotation_speed;
   float distance;
 };
+
+struct Color{
+  Color():
+  r(0.5),
+  g(0.5),
+  b(0.5)
+  {}
+
+  Color(float r_, float g_, float b_): r(r_), g(g_), b(b_){}
+  float r;
+  float g;
+  float b;
+};
 #endif
