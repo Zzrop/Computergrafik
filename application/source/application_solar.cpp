@@ -109,7 +109,6 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   initializeGeometry();
   initializeGeometryStars();
   initializeShaderPrograms();
-  //color_planets(r,g,b);
 
 
 }
@@ -225,6 +224,7 @@ void ApplicationSolar::updateView() {
   // upload matrix to gpu
   glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("ViewMatrix"),
                      1, GL_FALSE, glm::value_ptr(view_matrix));
+  glUniform3f(m_shaders.at("planet").u_locs.at("sun_pos"), 0.0f, 0.0f, 0.0f);
 }
 
 void ApplicationSolar::updateProjection() {
@@ -276,6 +276,7 @@ void ApplicationSolar::initializeShaderPrograms() {
   m_shaders.at("planet").u_locs["ViewMatrix"] = -1;
   m_shaders.at("planet").u_locs["ProjectionMatrix"] = -1;
   m_shaders.at("planet").u_locs["PlanetColor"] = -1;
+  m_shaders.at("planet").u_locs["sun_pos"] = -1;
 
 
 
