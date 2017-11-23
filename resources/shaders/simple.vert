@@ -10,16 +10,19 @@ uniform mat4 ViewMatrix;
 uniform mat4 ProjectionMatrix;
 uniform mat4 NormalMatrix;
 uniform vec3 PlanetColor;
-uniform vec3 sun_pos;
+
+vec3 sun_pos = vec3(0.0,0.0,0.0);
 
 out vec3 pass_Normal;
 out vec3 pass_Color;
 out vec3 pass_Sun;
+out vec3 pass_pos;
 
 void main(void)
 {
 	gl_Position = (ProjectionMatrix  * ViewMatrix * ModelMatrix) * vec4(in_Position, 1.0);
 	pass_Normal = (NormalMatrix * vec4(in_Normal, 0.0)).xyz;
-	pass_Sun = (ViewMatrix * vec4(sun_pos, 0.0)).xyz;
+	pass_Sun = (ModelMatrix * vec4(sun_pos, 0.0)).xyz;
 	pass_Color = PlanetColor;
+	pass_pos = gl_Position.xyz;
 }

@@ -72,7 +72,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
 
   //Erstellung eines Sterne-Vektors mit positions und farbangaben
-  Stars_num = 200000;
+  Stars_num = 2000;
   for (int i = 0; i < Stars_num; ++i)
   {
     float pos_x = (1.0f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(20-1))))-10.0f;
@@ -220,16 +220,28 @@ void ApplicationSolar::upload_planet_transforms(Planet const& temp_planet)const 
 
 void ApplicationSolar::updateView() {
   // vertices are transformed in camera space, so camera transform must be inverted
+  glUseProgram(m_shaders.at("planet").handle);
   glm::fmat4 view_matrix = glm::inverse(m_view_transform);
   // upload matrix to gpu
   glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("ViewMatrix"),
                      1, GL_FALSE, glm::value_ptr(view_matrix));
-  glUniform3f(m_shaders.at("planet").u_locs.at("sun_pos"), 0.0f, 0.0f, 0.0f);
+
+  glUseProgram(m_shaders.at("stars").handle);
+
+  glUniformMatrix4fv(m_shaders.at("stars").u_locs.at("ViewMatrix"),
+                     1, GL_FALSE, glm::value_ptr(view_matrix));
+
 }
 
 void ApplicationSolar::updateProjection() {
   // upload matrix to gpu
+  glUseProgram(m_shaders.at("planet").handle);
   glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("ProjectionMatrix"),
+                     1, GL_FALSE, glm::value_ptr(m_view_projection));
+
+  glUseProgram(m_shaders.at("stars").handle);
+
+  glUniformMatrix4fv(m_shaders.at("stars").u_locs.at("ProjectionMatrix"),
                      1, GL_FALSE, glm::value_ptr(m_view_projection));
 }
 
@@ -265,8 +277,8 @@ void ApplicationSolar::mouseCallback(double pos_x, double pos_y) {
 void ApplicationSolar::initializeShaderPrograms() {
   m_shaders.emplace("stars", shader_program{m_resource_path + "shaders/stars.vert",
                                           m_resource_path + "shaders/stars.frag"});
-//  m_shaders.at("stars").u_locs["ViewMatrix"] = -1;
-//  m_shaders.at("stars").u_locs["ProjectionMatrix"] = -1;
+  m_shaders.at("stars").u_locs["ViewMatrix"] = -1;
+  m_shaders.at("stars").u_locs["ProjectionMatrix"] = -1;
   // store shader program objects in container
   m_shaders.emplace("planet", shader_program{m_resource_path + "shaders/simple.vert",
                                            m_resource_path + "shaders/simple.frag"});
@@ -276,7 +288,7 @@ void ApplicationSolar::initializeShaderPrograms() {
   m_shaders.at("planet").u_locs["ViewMatrix"] = -1;
   m_shaders.at("planet").u_locs["ProjectionMatrix"] = -1;
   m_shaders.at("planet").u_locs["PlanetColor"] = -1;
-  m_shaders.at("planet").u_locs["sun_pos"] = -1;
+
 
 
 
