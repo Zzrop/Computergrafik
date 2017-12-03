@@ -6,6 +6,7 @@
 #include "application.hpp"
 #include "model.hpp"
 #include "structs.hpp"
+#include "texture_loader.hpp"
 
 // gpu representation of model
 class ApplicationSolar : public Application {
@@ -30,6 +31,7 @@ class ApplicationSolar : public Application {
 
   void color_planets(Color const& rgb) const;
 
+
   // draw all objects
   void render() const;
 
@@ -37,6 +39,7 @@ class ApplicationSolar : public Application {
   void initializeGeometryStars();
   void initializeShaderPrograms();
   void initializeGeometry();
+//  void initializeTextures()const;
   void updateView();
 
   // cpu representation of model
@@ -44,6 +47,7 @@ class ApplicationSolar : public Application {
   model_object planet_object;
   std::map<std::string, Planet> planets;
   std::map<std::string, Color> Planet_Colors;
+  std::map<std::string, pixel_data>Planet_Textures;
   std::vector<float> Stars;
   int Stars_num;
 };

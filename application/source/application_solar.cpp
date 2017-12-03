@@ -71,6 +71,28 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   Planet_Colors["Mond"] = Mond_c;
 
 
+  pixel_data Sun_tex = texture_loader::file("sunmap.jpg");
+  /*pixel_data Merkur_tex = texture_loader::file("mercurymap.jpg");
+  pixel_data Venus_tex(0.957f,0.643f,0.376f);
+  pixel_data Erde_c(0.0f,0.0f,1.0f);
+  pixel_data Mars_c(1.0f,0.0f,0.0f);
+  pixel_data Jupiter_c(0.275f,0.510f,0.706f);
+  pixel_data Saturn_c(0.502f,0.502f,0.0f);
+  pixel_data Uranus_c(0.118f,0.565f,1.0f);
+  pixel_data Neptun_c(0.0f,0.749f,1.0f);
+  pixel_data Mond_c(0.863f,0.863f,0.863f);
+*/
+  Planet_Textures["Sun"] = Sun_tex;/*
+  Planet_Textures["Merkur"] = Merkur_tex;
+  Planet_Textures["Venus"] = Venus_tex;
+  Planet_Textures["Erde"] = Erde_tex;
+  Planet_Textures["Mars"] = Mars_tex;
+  Planet_Textures["Jupiter"] = Jupiter_tex
+  Planet_Textures["Uranus"] = Uranus_tex;
+  Planet_Textures["Neptun"] = Neptun_tex;
+  Planet_Textures["Mond"] = Mond_tex;
+*/
+
   //Erstellung eines Sterne-Vektors mit positions und farbangaben
   Stars_num = 2000;
   for (int i = 0; i < Stars_num; ++i)
@@ -108,7 +130,9 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
   initializeGeometry();
   initializeGeometryStars();
+  //initializeTextures();
   initializeShaderPrograms();
+
 
 
 }
@@ -124,8 +148,17 @@ void ApplicationSolar::color_planets(Color const& rgb) const {
   glUniform3f(m_shaders.at("planet").u_locs.at("PlanetColor"), rgb.r, rgb.g, rgb.b);
 
 }
-
-
+/*
+void ApplicationSolar::initializeTextures()const{
+  glActiveTexture(GL_TEXTURE0);
+  GLint texture_object;
+  glGenTextures(1, &texture_object);
+  glBindTexture(GL_TEXTURE_2D, texture_object);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0,"jpg", , 500, 0,
+              input_channels, "jpg", data_ptr);
+}*/
 void ApplicationSolar::render() const {
 
 
