@@ -72,26 +72,25 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
 
   pixel_data Sun_tex = texture_loader::file("sunmap.jpg");
-  /*pixel_data Merkur_tex = texture_loader::file("mercurymap.jpg");
-  pixel_data Venus_tex(0.957f,0.643f,0.376f);
-  pixel_data Erde_c(0.0f,0.0f,1.0f);
-  pixel_data Mars_c(1.0f,0.0f,0.0f);
-  pixel_data Jupiter_c(0.275f,0.510f,0.706f);
-  pixel_data Saturn_c(0.502f,0.502f,0.0f);
-  pixel_data Uranus_c(0.118f,0.565f,1.0f);
-  pixel_data Neptun_c(0.0f,0.749f,1.0f);
-  pixel_data Mond_c(0.863f,0.863f,0.863f);
-*/
-  Planet_Textures["Sun"] = Sun_tex;/*
+  pixel_data Merkur_tex = texture_loader::file("mercurymap.jpg");
+  pixel_data Venus_tex = texture_loader::file("venusmap.jpg");
+  pixel_data Erde_tex = texture_loader::file("earthmap1k.jpg");
+  pixel_data Mars_tex = texture_loader::file("marsmap1k.jpg");
+  pixel_data Jupiter_tex = texture_loader::file("jupitermap");
+  pixel_data Saturn_tex = texture_loader::file("saturnmap.jpg");
+  pixel_data Uranus_tex = texture_loader::file("uranusmap.jpg");
+  pixel_data Neptun_tex = texture_loader::file("neptunemap.jpg");
+  pixel_data Mond_tex = texture_loader::file("moonmap1k.jpg");
+
+  Planet_Textures["Sun"] = Sun_tex;
   Planet_Textures["Merkur"] = Merkur_tex;
   Planet_Textures["Venus"] = Venus_tex;
   Planet_Textures["Erde"] = Erde_tex;
   Planet_Textures["Mars"] = Mars_tex;
-  Planet_Textures["Jupiter"] = Jupiter_tex
+  Planet_Textures["Jupiter"] = Jupiter_tex;
   Planet_Textures["Uranus"] = Uranus_tex;
   Planet_Textures["Neptun"] = Neptun_tex;
   Planet_Textures["Mond"] = Mond_tex;
-*/
 
   //Erstellung eines Sterne-Vektors mit positions und farbangaben
   Stars_num = 2000;
@@ -159,6 +158,14 @@ void ApplicationSolar::initializeTextures()const{
   glTexImage2D(GL_TEXTURE_2D, 0,"jpg", , 500, 0,
               input_channels, "jpg", data_ptr);
 }*/
+/*
+void ApplicationSolar::uploadtextures(int unit){
+
+  GLint texture_object;
+
+
+}
+*/
 void ApplicationSolar::render() const {
 
 
