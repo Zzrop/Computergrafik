@@ -72,35 +72,27 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
 
   pixel_data Sun_tex = texture_loader::file("../resources/textures/sunmap.png");
-/*  pixel_data Merkur_tex = texture_loader::file("mercurymap.png");
-  pixel_data Venus_tex = texture_loader::file("venusmap.png");
-  pixel_data Erde_tex = texture_loader::file("earthmap1k.png");
-  pixel_data Mars_tex = texture_loader::file("marsmap1k.png");
-  pixel_data Jupiter_tex = texture_loader::file("jupitermap");
-  pixel_data Saturn_tex = texture_loader::file("saturnmap.png");
-  pixel_data Uranus_tex = texture_loader::file("uranusmap.png");
-  pixel_data Neptun_tex = texture_loader::file("neptunemap.png");
-  pixel_data Mond_tex = texture_loader::file("moonmap1k.png");*/
+  pixel_data Merkur_tex = texture_loader::file("../resources/textures/mercurymap.png");
+  pixel_data Venus_tex = texture_loader::file("../resources/textures/venusmap.png");
+  pixel_data Erde_tex = texture_loader::file("../resources/textures/earthmap1k.png");
+  pixel_data Mond_tex = texture_loader::file("../resources/textures/moonmap1k.png");
+  pixel_data Mars_tex = texture_loader::file("../resources/textures/marsmap1k.png");
+  pixel_data Jupiter_tex = texture_loader::file("../resources/textures/jupitermap.png");
+  pixel_data Saturn_tex = texture_loader::file("../resources/textures/saturnmap.png");
+  pixel_data Uranus_tex = texture_loader::file("../resources/textures/uranusmap.png");
+  pixel_data Neptun_tex = texture_loader::file("../resources/textures/neptunemap.png");
 
-  Planet_Textures["Sun"] = Sun_tex;
-/*  Planet_Textures["Merkur"] = Merkur_tex;
-  Planet_Textures["Venus"] = Venus_tex;
-  Planet_Textures["Erde"] = Erde_tex;
-  Planet_Textures["Mars"] = Mars_tex;
-  Planet_Textures["Jupiter"] = Jupiter_tex;
-  Planet_Textures["Uranus"] = Uranus_tex;
-  Planet_Textures["Neptun"] = Neptun_tex;
-  Planet_Textures["Mond"] = Mond_tex;*/
+  Planet_Textures.push_back(Erde_tex);
+  Planet_Textures.push_back(Mond_tex);
+  Planet_Textures.push_back(Jupiter_tex);
+  Planet_Textures.push_back(Mars_tex);
+  Planet_Textures.push_back(Merkur_tex);
+  Planet_Textures.push_back(Neptun_tex);
+  Planet_Textures.push_back(Saturn_tex);
+  Planet_Textures.push_back(Sun_tex);
+  Planet_Textures.push_back(Uranus_tex);
+  Planet_Textures.push_back(Venus_tex);
 
-  glActiveTexture(GL_TEXTURE0);
-  GLuint texture_object;
-  glGenTextures(1, &texture_object);
-  glBindTexture(GL_TEXTURE_2D, texture_object);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, 0, Sun_tex.channels, Sun_tex.width, Sun_tex.height, 0,
-              Sun_tex.channels, Sun_tex.channel_type, Sun_tex
-              .ptr());
 
   //Erstellung eines Sterne-Vektors mit positions und farbangaben
   Stars_num = 2000;
@@ -137,9 +129,10 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
       std::cout << *i << ' ';*/
   std::cout << "Im working!";
 
+  initializeTextures();
   initializeGeometry();
   initializeGeometryStars();
-  //initializeTextures();
+
   initializeShaderPrograms();
 
 
@@ -157,17 +150,25 @@ void ApplicationSolar::color_planets(Color const& rgb) const {
   glUniform3f(m_shaders.at("planet").u_locs.at("PlanetColor"), rgb.r, rgb.g, rgb.b);
 
 }
-/*
-void ApplicationSolar::initializeTextures()const{
-  glActiveTexture(GL_TEXTURE0);
-  GLint texture_object;
+
+void ApplicationSolar::initializeTextures(){
+  int k = 0;
+  for (auto i: Planet_Textures)
+  {
+  glActiveTexture(GL_TEXTURE0 + k);
+  GLuint texture_object;
   glGenTextures(1, &texture_object);
   glBindTexture(GL_TEXTURE_2D, texture_object);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, 0,"jpg", , 500, 0,
-              input_channels, "jpg", data_ptr);
-}*/
+  glTexImage2D(GL_TEXTURE_2D, 0, i.channels, i.width, i.height, 0,
+              i.channels, i.channel_type, i
+              .ptr());
+  k++;
+  }
+
+  std::cout << "working?" <<"\n";
+}
 /*
 void ApplicationSolar::uploadtextures(int unit){
 
@@ -182,13 +183,14 @@ void ApplicationSolar::render() const {
   // bind shader to upload uniforms
   glUseProgram(m_shaders.at("planet").handle);
 
+  int k = 0;
 
   for (auto i: planets)
   {
-//    std::cout <<Planet_Colors[i.first].r;
+//    std::cout <<i.first << " " << k <<" \n";
     int color_sampler_location = glGetUniformLocation(m_shaders.at("planet").handle, "ColorTex");
 
-    glUniform1i(color_sampler_location, 0);
+    glUniform1i(color_sampler_location, k);
     upload_planet_transforms(i.second);
     color_planets(Planet_Colors.at(i.first));
     // bind the VAO to draw
@@ -196,8 +198,10 @@ void ApplicationSolar::render() const {
 
     // draw bound vertex array using bound shader
     glDrawElements(planet_object.draw_mode, planet_object.num_elements, model::INDEX.type, NULL);
+    k++;
     if (i.first == "Erde")
     {
+      glUniform1i(color_sampler_location, k);
       upload_moon_transforms(i.second);
       color_planets(Planet_Colors.at("Mond"));
 
@@ -205,7 +209,9 @@ void ApplicationSolar::render() const {
 
       // draw bound vertex array using bound shader
       glDrawElements(planet_object.draw_mode, planet_object.num_elements, model::INDEX.type, NULL);
+      k++;
     }
+
 
   }
 
@@ -312,11 +318,11 @@ void ApplicationSolar::uploadUniforms() {
 
 // handle key input
 void ApplicationSolar::keyCallback(int key, int scancode, int action, int mods) {
-  if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+  if (key == GLFW_KEY_W &&( action == GLFW_PRESS || action == GLFW_REPEAT)) {
     m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 0.0f, -0.1f});
     updateView();
   }
-  else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+  else if (key == GLFW_KEY_S &&( action == GLFW_PRESS || action == GLFW_REPEAT)) {
     m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 0.0f, 0.1f});
     updateView();
   }
@@ -342,8 +348,8 @@ void ApplicationSolar::initializeShaderPrograms() {
   m_shaders.at("planet").u_locs["ViewMatrix"] = -1;
   m_shaders.at("planet").u_locs["ProjectionMatrix"] = -1;
   m_shaders.at("planet").u_locs["PlanetColor"] = -1;
-  m_shaders.at("planet").u_locs["colorTex"] = -1;
-//  m_shaders.at("planet").u_locs["TexCoord"] = -1;
+//  m_shaders.at("planet").u_locs["colorTex"] = -1;
+//  m_shaders.at("planet").u_locs["rendermode"] = -1;
 
 
 

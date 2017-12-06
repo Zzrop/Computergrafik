@@ -39,7 +39,7 @@ class ApplicationSolar : public Application {
   void initializeGeometryStars();
   void initializeShaderPrograms();
   void initializeGeometry();
-//  void initializeTextures()const;
+  void initializeTextures();
   void updateView();
 
   // cpu representation of model
@@ -47,7 +47,7 @@ class ApplicationSolar : public Application {
   model_object planet_object;
   std::map<std::string, Planet> planets;
   std::map<std::string, Color> Planet_Colors;
-  std::map<std::string, pixel_data>Planet_Textures;
+  std::vector<pixel_data>Planet_Textures;
   std::vector<float> Stars;
   int Stars_num;
 };
