@@ -182,9 +182,13 @@ void ApplicationSolar::render() const {
   // bind shader to upload uniforms
   glUseProgram(m_shaders.at("planet").handle);
 
+
   for (auto i: planets)
   {
 //    std::cout <<Planet_Colors[i.first].r;
+    int color_sampler_location = glGetUniformLocation(m_shaders.at("planet").handle, "ColorTex");
+
+    glUniform1i(color_sampler_location, 0);
     upload_planet_transforms(i.second);
     color_planets(Planet_Colors.at(i.first));
     // bind the VAO to draw
@@ -338,6 +342,8 @@ void ApplicationSolar::initializeShaderPrograms() {
   m_shaders.at("planet").u_locs["ViewMatrix"] = -1;
   m_shaders.at("planet").u_locs["ProjectionMatrix"] = -1;
   m_shaders.at("planet").u_locs["PlanetColor"] = -1;
+  m_shaders.at("planet").u_locs["colorTex"] = -1;
+//  m_shaders.at("planet").u_locs["TexCoord"] = -1;
 
 
 
@@ -346,7 +352,8 @@ void ApplicationSolar::initializeShaderPrograms() {
 
 // load models
 void ApplicationSolar::initializeGeometry() {
-  model planet_model = model_loader::obj(m_resource_path + "models/sphere.obj", model::NORMAL);
+  model planet_model = model_loader::obj(m_resource_path + "models/sphere.obj", model::NORMAL | model::TEXCOORD);
+
 
   // generate vertex array object
   glGenVertexArrays(1, &planet_object.vertex_AO);
@@ -368,6 +375,12 @@ void ApplicationSolar::initializeGeometry() {
   glEnableVertexAttribArray(1);
   // second attribute is 3 floats with no offset & stride
   glVertexAttribPointer(1, model::NORMAL.components, model::NORMAL.type, GL_FALSE, planet_model.vertex_bytes, planet_model.offsets[model::NORMAL]);
+  // activate third attribute on gpu
+  glEnableVertexAttribArray(2);
+  // third attribute is 2 floats with no offset & stride
+  glVertexAttribPointer(2, model::TEXCOORD.components, model::TEXCOORD.type, GL_FALSE, planet_model.vertex_bytes, planet_model.offsets[model::TEXCOORD]);
+
+
 
    // generate generic buffer
   glGenBuffers(1, &planet_object.element_BO);
