@@ -92,6 +92,16 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   Planet_Textures["Neptun"] = Neptun_tex;
   Planet_Textures["Mond"] = Mond_tex;
 
+  glActiveTexture(GL_TEXTURE0);
+  GLuint texture_object;
+  glGenTextures(1, &texture_object);
+  glBindTexture(GL_TEXTURE_2D, texture_object);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, Sun_tex.channels, Sun_tex.width, Sun_tex.height, 0,
+              Sun_tex.channels, Sun_tex.channel_type, Sun_tex
+              .ptr());
+
   //Erstellung eines Sterne-Vektors mit positions und farbangaben
   Stars_num = 2000;
   for (int i = 0; i < Stars_num; ++i)
