@@ -71,26 +71,26 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   Planet_Colors["Mond"] = Mond_c;
 
 
-  pixel_data Sun_tex = texture_loader::file("sunmap.jpg");
-  pixel_data Merkur_tex = texture_loader::file("mercurymap.jpg");
-  pixel_data Venus_tex = texture_loader::file("venusmap.jpg");
-  pixel_data Erde_tex = texture_loader::file("earthmap1k.jpg");
-  pixel_data Mars_tex = texture_loader::file("marsmap1k.jpg");
+  pixel_data Sun_tex = texture_loader::file("../resources/textures/sunmap.png");
+/*  pixel_data Merkur_tex = texture_loader::file("mercurymap.png");
+  pixel_data Venus_tex = texture_loader::file("venusmap.png");
+  pixel_data Erde_tex = texture_loader::file("earthmap1k.png");
+  pixel_data Mars_tex = texture_loader::file("marsmap1k.png");
   pixel_data Jupiter_tex = texture_loader::file("jupitermap");
-  pixel_data Saturn_tex = texture_loader::file("saturnmap.jpg");
-  pixel_data Uranus_tex = texture_loader::file("uranusmap.jpg");
-  pixel_data Neptun_tex = texture_loader::file("neptunemap.jpg");
-  pixel_data Mond_tex = texture_loader::file("moonmap1k.jpg");
+  pixel_data Saturn_tex = texture_loader::file("saturnmap.png");
+  pixel_data Uranus_tex = texture_loader::file("uranusmap.png");
+  pixel_data Neptun_tex = texture_loader::file("neptunemap.png");
+  pixel_data Mond_tex = texture_loader::file("moonmap1k.png");*/
 
   Planet_Textures["Sun"] = Sun_tex;
-  Planet_Textures["Merkur"] = Merkur_tex;
+/*  Planet_Textures["Merkur"] = Merkur_tex;
   Planet_Textures["Venus"] = Venus_tex;
   Planet_Textures["Erde"] = Erde_tex;
   Planet_Textures["Mars"] = Mars_tex;
   Planet_Textures["Jupiter"] = Jupiter_tex;
   Planet_Textures["Uranus"] = Uranus_tex;
   Planet_Textures["Neptun"] = Neptun_tex;
-  Planet_Textures["Mond"] = Mond_tex;
+  Planet_Textures["Mond"] = Mond_tex;*/
 
   glActiveTexture(GL_TEXTURE0);
   GLuint texture_object;
