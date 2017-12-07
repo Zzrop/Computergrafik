@@ -150,7 +150,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
 void ApplicationSolar::color_planets(Color const& rgb) const {
 
-  glUniform3f(m_shaders.at("planet").u_locs.at("PlanetColor"), rgb.r, rgb.g, rgb.b);
+//  glUniform3f(m_shaders.at("planet").u_locs.at("PlanetColor"), rgb.r, rgb.g, rgb.b);
 
 }
 
@@ -174,14 +174,10 @@ void ApplicationSolar::initializeSky(){
   glEnableVertexAttribArray(0);
   // first attribute is 3 floats with no offset & stride
   glVertexAttribPointer(0, model::POSITION.components, model::POSITION.type, GL_FALSE, sky_model.vertex_bytes, sky_model.offsets[model::POSITION]);
-  // activate second attribute on gpu
-  glEnableVertexAttribArray(1);
-  // second attribute is 3 floats with no offset & stride
-  glVertexAttribPointer(1, model::NORMAL.components, model::NORMAL.type, GL_FALSE, sky_model.vertex_bytes, sky_model.offsets[model::NORMAL]);
   // activate third attribute on gpu
-  glEnableVertexAttribArray(2);
+  glEnableVertexAttribArray(1);
   // third attribute is 2 floats with no offset & stride
-  glVertexAttribPointer(2, model::TEXCOORD.components, model::TEXCOORD.type, GL_FALSE, sky_model.vertex_bytes, sky_model.offsets[model::TEXCOORD]);
+  glVertexAttribPointer(1, model::TEXCOORD.components, model::TEXCOORD.type, GL_FALSE, sky_model.vertex_bytes, sky_model.offsets[model::TEXCOORD]);
 
 
 
@@ -232,9 +228,6 @@ void ApplicationSolar::render() const {
 
   glUseProgram(m_shaders.at("sky").handle);
   int color_sampler_location = glGetUniformLocation(m_shaders.at("sky").handle, "ColorTex");
-/*  glm::fmat4 model_matrix = glm::scale(glm::fmat4{}, glm::fvec3{1.0,1.0,1.0});
-  glUniformMatrix4fv(m_shaders.at("sky").u_locs.at("ModelMatrix"),
-                     1, GL_FALSE, glm::value_ptr(model_matrix));*/
   glUniform1i(color_sampler_location, 10);
   glDrawElements(sky_object.draw_mode, sky_object.num_elements, model::INDEX.type, NULL);
 
@@ -412,13 +405,12 @@ void ApplicationSolar::initializeShaderPrograms() {
   m_shaders.at("planet").u_locs["ModelMatrix"] = -1;
   m_shaders.at("planet").u_locs["ViewMatrix"] = -1;
   m_shaders.at("planet").u_locs["ProjectionMatrix"] = -1;
-  m_shaders.at("planet").u_locs["PlanetColor"] = -1;
+//  m_shaders.at("planet").u_locs["PlanetColor"] = -1;
 //  m_shaders.at("planet").u_locs["colorTex"] = -1;
 //  m_shaders.at("planet").u_locs["rendermode"] = -1;
 
   m_shaders.emplace("sky", shader_program{m_resource_path + "shaders/sky.vert",
                                            m_resource_path + "shaders/sky.frag"});
-  m_shaders.at("sky").u_locs["NormalMatrix"] = -1;
   m_shaders.at("sky").u_locs["ViewMatrix"] = -1;
   m_shaders.at("sky").u_locs["ProjectionMatrix"] = -1;
 
