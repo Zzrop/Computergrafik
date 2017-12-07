@@ -34,10 +34,8 @@ void main(void)
 {
 	gl_Position = (ProjectionMatrix  * ViewMatrix * ModelMatrix) * vec4(in_Position, 1.0);
 	vertPos = (ViewMatrix * ModelMatrix * vec4(in_Position, 1.0)).xyz;
-
-
-
 	pass_Normal = (NormalMatrix * vec4(in_Normal, 0.0)).xyz;
+
 	pass_Sun = (ViewMatrix *  vec4(sun_pos, 1.0)).xyz;
 	pass_Color = PlanetColor;
 	pass_pos = gl_Position.xyz;

@@ -81,6 +81,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   pixel_data Saturn_tex = texture_loader::file("../resources/textures/saturnmap.png");
   pixel_data Uranus_tex = texture_loader::file("../resources/textures/uranusmap.png");
   pixel_data Neptun_tex = texture_loader::file("../resources/textures/neptunemap.png");
+  pixel_data Sky_tex = texture_loader::file("../resources/textures/Sky.png");
 
   Planet_Textures.push_back(Erde_tex);
   Planet_Textures.push_back(Mond_tex);
@@ -92,6 +93,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   Planet_Textures.push_back(Sun_tex);
   Planet_Textures.push_back(Uranus_tex);
   Planet_Textures.push_back(Venus_tex);
+  Planet_Textures.push_back(Sky_tex);
 
 
   //Erstellung eines Sterne-Vektors mit positions und farbangaben
@@ -130,6 +132,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   std::cout << "Im working!";
 
   initializeTextures();
+  initializeSky();
   initializeGeometry();
   initializeGeometryStars();
 
@@ -150,6 +153,53 @@ void ApplicationSolar::color_planets(Color const& rgb) const {
   glUniform3f(m_shaders.at("planet").u_locs.at("PlanetColor"), rgb.r, rgb.g, rgb.b);
 
 }
+
+void ApplicationSolar::initializeSky(){
+  model sky_model = model_loader::obj(m_resource_path + "models/sphere.obj", model::NORMAL | model::TEXCOORD);
+
+
+  // generate vertex array object
+  glGenVertexArrays(1, &sky_object.vertex_AO);
+  // bind the array for attaching buffers
+  glBindVertexArray(sky_object.vertex_AO);
+
+  // generate generic buffer
+  glGenBuffers(1, &sky_object.vertex_BO);
+  // bind this as an vertex array buffer containing all attributes
+  glBindBuffer(GL_ARRAY_BUFFER, sky_object.vertex_BO);
+  // configure currently bound array buffer
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * sky_model.data.size(), sky_model.data.data(), GL_STATIC_DRAW);
+
+  // activate first attribute on gpu
+  glEnableVertexAttribArray(0);
+  // first attribute is 3 floats with no offset & stride
+  glVertexAttribPointer(0, model::POSITION.components, model::POSITION.type, GL_FALSE, sky_model.vertex_bytes, sky_model.offsets[model::POSITION]);
+  // activate second attribute on gpu
+  glEnableVertexAttribArray(1);
+  // second attribute is 3 floats with no offset & stride
+  glVertexAttribPointer(1, model::NORMAL.components, model::NORMAL.type, GL_FALSE, sky_model.vertex_bytes, sky_model.offsets[model::NORMAL]);
+  // activate third attribute on gpu
+  glEnableVertexAttribArray(2);
+  // third attribute is 2 floats with no offset & stride
+  glVertexAttribPointer(2, model::TEXCOORD.components, model::TEXCOORD.type, GL_FALSE, sky_model.vertex_bytes, sky_model.offsets[model::TEXCOORD]);
+
+
+
+   // generate generic buffer
+  glGenBuffers(1, &sky_object.element_BO);
+  // bind this as an vertex array buffer containing all attributes
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sky_object.element_BO);
+  // configure currently bound array buffer
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, model::INDEX.size * sky_model.indices.size(), sky_model.indices.data(), GL_STATIC_DRAW);
+
+  // store type of primitive to draw
+  sky_object.draw_mode = GL_TRIANGLES;
+  // transfer number of indices to model object
+  sky_object.num_elements = GLsizei(sky_model.indices.size());
+}
+
+
+
 
 void ApplicationSolar::initializeTextures(){
   int k = 0;
@@ -178,6 +228,15 @@ void ApplicationSolar::uploadtextures(int unit){
 }
 */
 void ApplicationSolar::render() const {
+
+
+  glUseProgram(m_shaders.at("sky").handle);
+  int color_sampler_location = glGetUniformLocation(m_shaders.at("sky").handle, "ColorTex");
+/*  glm::fmat4 model_matrix = glm::scale(glm::fmat4{}, glm::fvec3{1.0,1.0,1.0});
+  glUniformMatrix4fv(m_shaders.at("sky").u_locs.at("ModelMatrix"),
+                     1, GL_FALSE, glm::value_ptr(model_matrix));*/
+  glUniform1i(color_sampler_location, 10);
+  glDrawElements(sky_object.draw_mode, sky_object.num_elements, model::INDEX.type, NULL);
 
 
   // bind shader to upload uniforms
@@ -291,6 +350,10 @@ void ApplicationSolar::updateView() {
   glUniformMatrix4fv(m_shaders.at("stars").u_locs.at("ViewMatrix"),
                      1, GL_FALSE, glm::value_ptr(view_matrix));
 
+  glUseProgram(m_shaders.at("sky").handle);
+
+  glUniformMatrix4fv(m_shaders.at("sky").u_locs.at("ViewMatrix"),
+                     1, GL_FALSE, glm::value_ptr(view_matrix));
 }
 
 void ApplicationSolar::updateProjection() {
@@ -303,6 +366,9 @@ void ApplicationSolar::updateProjection() {
 
   glUniformMatrix4fv(m_shaders.at("stars").u_locs.at("ProjectionMatrix"),
                      1, GL_FALSE, glm::value_ptr(m_view_projection));
+  glUseProgram(m_shaders.at("sky").handle);
+  glUniformMatrix4fv(m_shaders.at("sky").u_locs.at("ProjectionMatrix"),
+                     1, GL_FALSE, glm::value_ptr(m_view_projection));
 }
 
 // update uniform locations
@@ -311,7 +377,6 @@ void ApplicationSolar::uploadUniforms() {
 
   // bind new shader
   glUseProgram(m_shaders.at("planet").handle);
-
   updateView();
   updateProjection();
 }
@@ -351,8 +416,11 @@ void ApplicationSolar::initializeShaderPrograms() {
 //  m_shaders.at("planet").u_locs["colorTex"] = -1;
 //  m_shaders.at("planet").u_locs["rendermode"] = -1;
 
-
-
+  m_shaders.emplace("sky", shader_program{m_resource_path + "shaders/sky.vert",
+                                           m_resource_path + "shaders/sky.frag"});
+  m_shaders.at("sky").u_locs["NormalMatrix"] = -1;
+  m_shaders.at("sky").u_locs["ViewMatrix"] = -1;
+  m_shaders.at("sky").u_locs["ProjectionMatrix"] = -1;
 
 }
 

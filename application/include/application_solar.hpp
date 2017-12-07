@@ -36,6 +36,7 @@ class ApplicationSolar : public Application {
   void render() const;
 
  protected:
+  void initializeSky();
   void initializeGeometryStars();
   void initializeShaderPrograms();
   void initializeGeometry();
@@ -43,6 +44,7 @@ class ApplicationSolar : public Application {
   void updateView();
 
   // cpu representation of model
+  model_object sky_object;
   model_object star_object;
   model_object planet_object;
   std::map<std::string, Planet> planets;
