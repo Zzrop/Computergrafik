@@ -31,6 +31,8 @@ class ApplicationSolar : public Application {
 
   void color_planets(Color const& rgb) const;
 
+  void render_skysphere()const;
+
 
   // draw all objects
   void render() const;
@@ -50,8 +52,13 @@ class ApplicationSolar : public Application {
   std::map<std::string, Planet> planets;
   std::map<std::string, Color> Planet_Colors;
   std::vector<pixel_data>Planet_Textures;
+  pixel_data sky_sphere_texture;
   std::vector<float> Stars;
   int Stars_num;
+  std::vector<GLuint>texture_object_container;
+  GLuint sky_sphere_tex_obj;
+
+
 };
 
 #endif

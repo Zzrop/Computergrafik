@@ -29,14 +29,14 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
 {
   Planet Sun(1.0f, 0.0f, 0.0f);
-  Planet Merkur(0.383f, 3.012f, 0.387f);
+  Planet Merkur(0.383f, 3.012f, 0.5f);
   Planet Venus(0.950f, 1.177f, 0.723f);
   Planet Erde(1.0f, 1.0f, 1.0f);
   Planet Mars(0.583f, 0.53f, 1.524f);
-  Planet Jupiter(10.97f, 0.084f, 5.2f);
-  Planet Saturn(9.14f, 0.0339f, 9.54f);
-  Planet Uranus(3.98f, 0.0119f, 19.19f);
-  Planet Neptun(3.87f, 0.006f, 30.1f);
+  Planet Jupiter(10.97f, 0.084f, 4.2f);
+  Planet Saturn(9.14f, 0.0339f, 6.54f);
+  Planet Uranus(3.98f, 0.0119f, 8.19f);
+  Planet Neptun(3.87f, 0.006f, 9.1f);
   planets["Sun"] = Sun;
   planets["Merkur"] = Merkur;
   planets["Venus"] = Venus;
@@ -70,7 +70,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   Planet_Colors["Neptun"] = Neptun_c;
   Planet_Colors["Mond"] = Mond_c;
 
-
+  pixel_data Sky_tex = texture_loader::file("../resources/textures/sky_sphere.png");
   pixel_data Sun_tex = texture_loader::file("../resources/textures/sunmap.png");
   pixel_data Merkur_tex = texture_loader::file("../resources/textures/mercurymap.png");
   pixel_data Venus_tex = texture_loader::file("../resources/textures/venusmap.png");
@@ -81,7 +81,9 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   pixel_data Saturn_tex = texture_loader::file("../resources/textures/saturnmap.png");
   pixel_data Uranus_tex = texture_loader::file("../resources/textures/uranusmap.png");
   pixel_data Neptun_tex = texture_loader::file("../resources/textures/neptunemap.png");
-  pixel_data Sky_tex = texture_loader::file("../resources/textures/Sky.png");
+
+
+  sky_sphere_texture = Sky_tex;
 
   Planet_Textures.push_back(Erde_tex);
   Planet_Textures.push_back(Mond_tex);
@@ -93,7 +95,6 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   Planet_Textures.push_back(Sun_tex);
   Planet_Textures.push_back(Uranus_tex);
   Planet_Textures.push_back(Venus_tex);
-  Planet_Textures.push_back(Sky_tex);
 
 
   //Erstellung eines Sterne-Vektors mit positions und farbangaben
@@ -119,16 +120,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
   }
 
-//    float* stars = Stars.data();
 
-
-/*    for (int i = 0; i<6000;++i)
-    {
-        std::cout << stars[i] << std::endl;
-    }*/
-/*
-  for (std::vector<float>::const_iterator i = Stars.begin(); i != Stars.end(); ++i)
-      std::cout << *i << ' ';*/
   std::cout << "Im working!";
 
   initializeTextures();
@@ -201,37 +193,48 @@ void ApplicationSolar::initializeTextures(){
   int k = 0;
   for (auto i: Planet_Textures)
   {
-  glActiveTexture(GL_TEXTURE0 + k);
+  glActiveTexture(GL_TEXTURE0);
   GLuint texture_object;
   glGenTextures(1, &texture_object);
   glBindTexture(GL_TEXTURE_2D, texture_object);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexImage2D(GL_TEXTURE_2D, 0, i.channels, i.width, i.height, 0,
-              i.channels, i.channel_type, i
-              .ptr());
+              i.channels, i.channel_type, i.ptr());
+  texture_object_container.push_back(texture_object);
   k++;
   }
+  glActiveTexture(GL_TEXTURE0);
+  glGenTextures(1, &sky_sphere_tex_obj);
+  glBindTexture(GL_TEXTURE_2D, sky_sphere_tex_obj);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, sky_sphere_texture.channels, sky_sphere_texture.width, sky_sphere_texture.height, 0,
+              sky_sphere_texture.channels, sky_sphere_texture.channel_type, sky_sphere_texture.ptr());
+
 
   std::cout << "working?" <<"\n";
 }
-/*
-void ApplicationSolar::uploadtextures(int unit){
 
-  GLint texture_object;
+void ApplicationSolar::render_skysphere()const {
+  glDepthMask(GL_FALSE);
+  glUseProgram(m_shaders.at("sky").handle);
 
+  glActiveTexture(GL_TEXTURE0);
+
+  int color_sampler_location = glGetUniformLocation(m_shaders.at("sky").handle, "ColorTex");
+  glBindTexture(GL_TEXTURE_2D, sky_sphere_tex_obj);
+  glUniform1i(color_sampler_location,0);
+
+  glBindVertexArray(sky_object.vertex_AO);
+  glDrawElements(sky_object.draw_mode, sky_object.num_elements, model::INDEX.type, NULL);
+  glDepthMask(GL_TRUE);
 
 }
-*/
+
+
 void ApplicationSolar::render() const {
-
-
-  glUseProgram(m_shaders.at("sky").handle);
-  int color_sampler_location = glGetUniformLocation(m_shaders.at("sky").handle, "ColorTex");
-  glUniform1i(color_sampler_location, 10);
-  glDrawElements(sky_object.draw_mode, sky_object.num_elements, model::INDEX.type, NULL);
-
-
+  render_skysphere();
   // bind shader to upload uniforms
   glUseProgram(m_shaders.at("planet").handle);
 
@@ -241,8 +244,10 @@ void ApplicationSolar::render() const {
   {
 //    std::cout <<i.first << " " << k <<" \n";
     int color_sampler_location = glGetUniformLocation(m_shaders.at("planet").handle, "ColorTex");
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture_object_container[k]);
+    glUniform1i(color_sampler_location, 0);
 
-    glUniform1i(color_sampler_location, k);
     upload_planet_transforms(i.second);
     color_planets(Planet_Colors.at(i.first));
     // bind the VAO to draw
@@ -253,7 +258,10 @@ void ApplicationSolar::render() const {
     k++;
     if (i.first == "Erde")
     {
-      glUniform1i(color_sampler_location, k);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, texture_object_container[k]);
+      glUniform1i(color_sampler_location, 0);
+
       upload_moon_transforms(i.second);
       color_planets(Planet_Colors.at("Mond"));
 
@@ -389,6 +397,8 @@ void ApplicationSolar::keyCallback(int key, int scancode, int action, int mods) 
 //handle delta mouse movement input
 void ApplicationSolar::mouseCallback(double pos_x, double pos_y) {
   // mouse handling
+  m_view_transform = glm::rotate(m_view_transform, float(pos_x)/100, glm::fvec3{0.0f , -1.0f, 0.0f});
+  updateView();
 }
 
 // load shader programs
