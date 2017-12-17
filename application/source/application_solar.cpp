@@ -47,7 +47,6 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   planets["Uranus"] = Uranus;
   planets["Neptun"] = Neptun;
 
-  //Default-Planeten-Farbe
   Color Sun_c(1.0f,1.0f,0.0f);
   Color Merkur_c(0.863f,0.863f,0.863f);
   Color Venus_c(0.957f,0.643f,0.376f);
@@ -69,6 +68,9 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   Planet_Colors["Uranus"] = Uranus_c;
   Planet_Colors["Neptun"] = Neptun_c;
   Planet_Colors["Mond"] = Mond_c;
+
+  //Default-Planeten-Farbe
+
 
   pixel_data Sky_tex = texture_loader::file("../resources/textures/sky_sphere.png");
   pixel_data Sun_tex = texture_loader::file("../resources/textures/sunmap.png");
@@ -121,24 +123,19 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   }
 
 
-  std::cout << "Im working!";
+//  std::cout << "Im working!";
 
   initializeTextures();
   initializeSky();
   initializeGeometry();
   initializeGeometryStars();
-
   initializeShaderPrograms();
+  initializeQuad();
+
 
 
 
 }
-
-/*void ApplicationSolar::load_planets() const {
-
-
-
-}*/
 
 void ApplicationSolar::color_planets(Color const& rgb) const {
 
@@ -186,8 +183,49 @@ void ApplicationSolar::initializeSky(){
   sky_object.num_elements = GLsizei(sky_model.indices.size());
 }
 
+void ApplicationSolar::upload_Quad()const{
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  glUseProgram(m_shaders.at("quad").handle);
+  glActiveTexture(GL_TEXTURE0);
+
+  int color_sampler_location = glGetUniformLocation(m_shaders.at("quad").handle, "ColorTex");
+  glBindTexture(GL_TEXTURE_2D, framebuffer_tex_obj);
+  glUniform1i(color_sampler_location,0);
+
+  glBindVertexArray(quad.vertex_AO);
+  glDrawArrays(quad.draw_mode, 0, quad.num_elements);
 
 
+}
+
+
+void ApplicationSolar::initializeQuad(){
+  glGenVertexArrays(1, &quad.vertex_AO);
+
+  glBindVertexArray(quad.vertex_AO);
+
+  glGenBuffers(1, &quad.vertex_BO);
+
+  glBindBuffer(GL_ARRAY_BUFFER, quad.vertex_BO);
+
+  glBufferData(GL_ARRAY_BUFFER, (sizeof(float)*20), Quad_vector.data(), GL_STATIC_DRAW);
+
+  // activate first attribute on gpu
+  glEnableVertexAttribArray(0);
+  // first attribute is 3 floats with no offset & stride
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,(5*sizeof(float)),0);
+
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,(5*sizeof(float)),(void*)3);
+  // activate first attribute on gpu
+
+  quad.draw_mode = GL_TRIANGLE_STRIP;
+
+  quad.num_elements = GLsizei(Quad_vector.size()/5);
+
+
+}
 
 void ApplicationSolar::initializeTextures(){
   int k = 0;
@@ -232,8 +270,34 @@ void ApplicationSolar::render_skysphere()const {
 
 }
 
+void ApplicationSolar::initializeFramebuffer(){
+  glGenRenderbuffers(1, &rb_handle);
+  glBindRenderbuffer(GL_RENDERBUFFER, rb_handle);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 800, 600);
+
+  glActiveTexture(GL_TEXTURE0);
+  glGenTextures(1, &framebuffer_tex_obj);
+  glBindTexture(GL_TEXTURE_2D, framebuffer_tex_obj);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+  glGenFramebuffers(1, &fbo_handle);
+  glBindFramebuffer(GL_FRAMEBUFFER, fbo_handle);
+  glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, framebuffer_tex_obj, 0);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rb_handle);
+  GLenum draw_buffers[1] = {GL_COLOR_ATTACHMENT0};
+  glDrawBuffers(1 , draw_buffers);
+  GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  if (status != GL_FRAMEBUFFER_COMPLETE) { std::cout << "Frambuffer läuft nicht " << '\n';}
+}
+
 
 void ApplicationSolar::render() const {
+  glBindFramebuffer(GL_FRAMEBUFFER, fbo_handle);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glEnable(GL_DEPTH_TEST);
+
   render_skysphere();
   // bind shader to upload uniforms
   glUseProgram(m_shaders.at("planet").handle);
@@ -252,9 +316,9 @@ void ApplicationSolar::render() const {
     color_planets(Planet_Colors.at(i.first));
     // bind the VAO to draw
     glBindVertexArray(planet_object.vertex_AO);
-
     // draw bound vertex array using bound shader
     glDrawElements(planet_object.draw_mode, planet_object.num_elements, model::INDEX.type, NULL);
+
     k++;
     if (i.first == "Erde")
     {
@@ -282,25 +346,6 @@ void ApplicationSolar::render() const {
   glDrawArrays(star_object.draw_mode, 0, Stars_num);
 
 
-/*
-  glm::fmat4 model_matrix = glm::rotate(glm::fmat4{}, float(glfwGetTime()), glm::fvec3{0.0f, 1.0f, 0.0f});
-  model_matrix = glm::scale(model_matrix, glm::fvec3{0.5f, 0.5f, 0.5f});
-  model_matrix = glm::translate(model_matrix, glm::fvec3{0.0f, 0.0f, -1.0f});
-  glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("ModelMatrix"),
-                     1, GL_FALSE, glm::value_ptr(model_matrix));
-
-  // extra matrix for normal transformation to keep them orthogonal to surface
-  glm::fmat4 normal_matrix = glm::inverseTranspose(glm::inverse(m_view_transform) * model_matrix);
-  glUniformMatrix4fv(m_shaders.at("planet").u_locs.at("NormalMatrix"),
-                     1, GL_FALSE, glm::value_ptr(normal_matrix));
-*/
-/*
-  // bind the VAO to draw
-  glBindVertexArray(planet_object.vertex_AO);
-
-  // draw bound vertex array using bound shader
-  glDrawElements(planet_object.draw_mode, planet_object.num_elements, model::INDEX.type, NULL);
-*/
 }
 
 void ApplicationSolar::upload_moon_transforms(Planet const& host)const{
@@ -424,6 +469,13 @@ void ApplicationSolar::initializeShaderPrograms() {
   m_shaders.at("sky").u_locs["ViewMatrix"] = -1;
   m_shaders.at("sky").u_locs["ProjectionMatrix"] = -1;
 
+
+  m_shaders.emplace("quad", shader_program{m_resource_path + "shaders/quad.vert",
+                                           m_resource_path + "shaders/quad.frag"});
+
+  m_shaders.at("quad").u_locs["ColorTex"] = -1;
+
+
 }
 
 // load models
@@ -494,6 +546,8 @@ void ApplicationSolar::initializeGeometry() {
     glVertexAttribPointer(1,3,GL_FLOAT, GL_FALSE,(6*sizeof(float)),(GLvoid*)uintptr_t(sizeof(float)*3));
 
     star_object.draw_mode = GL_POINTS;
+
+
 
 
   }

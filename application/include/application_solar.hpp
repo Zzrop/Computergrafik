@@ -24,6 +24,8 @@ class ApplicationSolar : public Application {
   void uploadUniforms();
   // update projection matrix
   void updateProjection();
+
+  void upload_Quad() const;
   // react to key input
   void keyCallback(int key, int scancode, int action, int mods);
   //handle delta mouse movement input
@@ -32,31 +34,38 @@ class ApplicationSolar : public Application {
   void color_planets(Color const& rgb) const;
 
   void render_skysphere()const;
-
-
   // draw all objects
   void render() const;
 
+
  protected:
+
   void initializeSky();
   void initializeGeometryStars();
   void initializeShaderPrograms();
   void initializeGeometry();
   void initializeTextures();
+  void initializeFramebuffer();
+  void initializeQuad();
   void updateView();
 
   // cpu representation of model
   model_object sky_object;
   model_object star_object;
   model_object planet_object;
+  model_object quad;
   std::map<std::string, Planet> planets;
   std::map<std::string, Color> Planet_Colors;
   std::vector<pixel_data>Planet_Textures;
   pixel_data sky_sphere_texture;
   std::vector<float> Stars;
+  std::vector<float> Quad_vector= {-1,-1,0,0,0,1,-1,0,1,0,-1,1,0,0,1,1,1,0,1,1};
   int Stars_num;
   std::vector<GLuint>texture_object_container;
   GLuint sky_sphere_tex_obj;
+  GLuint framebuffer_tex_obj;
+  GLuint rb_handle;
+  GLuint fbo_handle;
 
 
 };
