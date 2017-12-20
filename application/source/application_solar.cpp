@@ -468,17 +468,17 @@ void ApplicationSolar::keyCallback(int key, int scancode, int action, int mods) 
     updateView();
   }
   else if (key == GLFW_KEY_8 &&( action == GLFW_PRESS || action == GLFW_REPEAT)) {
-    horizont_bool= true;
+    horizont_bool= !horizont_bool;
     updateView();
     std::cout <<"pressed '8' for horizontal flip \n";
   }
   else if (key == GLFW_KEY_9 &&( action == GLFW_PRESS || action == GLFW_REPEAT)) {
-    vert_bool = true;
+    vert_bool = !vert_bool;
     updateView();
     std::cout <<"pressed '9' for vertical flip \n";
   }
   else if (key == GLFW_KEY_7 &&( action == GLFW_PRESS || action == GLFW_REPEAT)) {
-    grey_bool = true;
+    grey_bool = !grey_bool;
     updateView();
     std::cout <<"pressed '7' for greyscale \n";
   }

@@ -15,7 +15,7 @@ void main(void)
 		out_Color = texture(ColorTex, pass_TexCoord);
 	}
 	else{
-		out_Color = vec4(1.0,0.0,0.0,0.0);
+		out_Color = vec4(pass_TexCoord,0.0,0.0);
 	}
 
 }

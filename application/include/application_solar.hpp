@@ -54,12 +54,13 @@ class ApplicationSolar : public Application {
   model_object star_object;
   model_object planet_object;
   model_object quad;
+  model quadi;
   std::map<std::string, Planet> planets;
   std::map<std::string, Color> Planet_Colors;
   std::vector<pixel_data>Planet_Textures;
   pixel_data sky_sphere_texture;
   std::vector<float> Stars;
-  std::vector<float> Quad_vector= {-1,-1,0,0,0,1,-1,0,1,0,-1,1,0,0,1,1,1,0,1,1};
+  std::vector<float> Quad_vector= {-1.0f,-1.0f,0.0f,0.0f,0.0f,1.0f,-1.0f,0.0f,1.0f,0.0f,-1.0f,1.0f,0.0f,0.0f,1.0f,1.0f,1.0f,0.0f,1.0f,1.0f};
   int Stars_num;
   std::vector<GLuint>texture_object_container;
   GLuint sky_sphere_tex_obj;
