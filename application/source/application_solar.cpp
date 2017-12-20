@@ -437,12 +437,30 @@ void ApplicationSolar::keyCallback(int key, int scancode, int action, int mods) 
     m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 0.0f, 0.1f});
     updateView();
   }
+  else if (key == GLFW_KEY_O &&( action == GLFW_PRESS || action == GLFW_REPEAT)) {
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, -0.1f, 0.0f});
+    updateView();
+  }
+  else if (key == GLFW_KEY_L &&( action == GLFW_PRESS || action == GLFW_REPEAT)) {
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.0f, 0.1f, 0.0f});
+    updateView();
+  }
+  else if (key == GLFW_KEY_A &&( action == GLFW_PRESS || action == GLFW_REPEAT)) {
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{-0.1f, 0.0f, 0.0f});
+    updateView();
+  }
+  else if (key == GLFW_KEY_D &&( action == GLFW_PRESS || action == GLFW_REPEAT)) {
+    m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.1f, 0.0f, 0.0f});
+    updateView();
+  }
 }
 
 //handle delta mouse movement input
 void ApplicationSolar::mouseCallback(double pos_x, double pos_y) {
   // mouse handling
   m_view_transform = glm::rotate(m_view_transform, float(pos_x)/100, glm::fvec3{0.0f , -1.0f, 0.0f});
+  updateView();
+  m_view_transform = glm::rotate(m_view_transform, float(pos_y)/100, glm::fvec3{1.0f , 0.0f, 0.0f});
   updateView();
 }
 
