@@ -2,6 +2,7 @@
 
 
 in vec2 pass_TexCoord;
+uniform bool grey_bool;
 uniform sampler2D ColorTex;
 
 out vec4 out_Color;
@@ -10,5 +11,11 @@ out vec4 out_Color;
 
 void main(void)
 {
-out_Color = texture(ColorTex, pass_TexCoord);
+	if(grey_bool == false){
+		out_Color = texture(ColorTex, pass_TexCoord);
+	}
+	else{
+		out_Color = vec4(1.0,0.0,0.0,0.0);
+	}
+
 }

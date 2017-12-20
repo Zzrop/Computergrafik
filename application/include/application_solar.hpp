@@ -66,6 +66,10 @@ class ApplicationSolar : public Application {
   GLuint framebuffer_tex_obj;
   GLuint rb_handle;
   GLuint fbo_handle;
+  bool horizont_bool;
+  bool vert_bool;
+  bool grey_bool;
+  bool blur_bool;
 
 
 };

@@ -100,7 +100,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
 
   //Erstellung eines Sterne-Vektors mit positions und farbangaben
-  Stars_num = 2000;
+  Stars_num = 200;
   for (int i = 0; i < Stars_num; ++i)
   {
     float pos_x = (1.0f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(20-1))))-10.0f;
@@ -122,6 +122,11 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
 
   }
 
+  bool grey_bool = false;
+  bool horizont_bool = false;
+  bool vert_bool = false;
+  bool blur_bool = false;
+
 
 //  std::cout << "Im working!";
 
@@ -131,6 +136,7 @@ ApplicationSolar::ApplicationSolar(std::string const& resource_path)
   initializeGeometryStars();
   initializeShaderPrograms();
   initializeQuad();
+  initializeFramebuffer();
 
 
 
@@ -345,6 +351,7 @@ void ApplicationSolar::render() const {
 
   glDrawArrays(star_object.draw_mode, 0, Stars_num);
 
+  upload_Quad();
 
 }
 
@@ -400,6 +407,13 @@ void ApplicationSolar::updateView() {
 
   glUniformMatrix4fv(m_shaders.at("sky").u_locs.at("ViewMatrix"),
                      1, GL_FALSE, glm::value_ptr(view_matrix));
+
+  glUseProgram(m_shaders.at("quad").handle);
+  glUniform1i(glGetUniformLocation(m_shaders.at("quad").handle, "horizont_bool"), horizont_bool);
+  glUniform1i(glGetUniformLocation(m_shaders.at("quad").handle, "vert_bool"), vert_bool);
+  glUniform1i(glGetUniformLocation(m_shaders.at("quad").handle, "grey_bool"), grey_bool);
+  std::cout <<"updated the view \n";
+
 }
 
 void ApplicationSolar::updateProjection() {
@@ -453,6 +467,22 @@ void ApplicationSolar::keyCallback(int key, int scancode, int action, int mods) 
     m_view_transform = glm::translate(m_view_transform, glm::fvec3{0.1f, 0.0f, 0.0f});
     updateView();
   }
+  else if (key == GLFW_KEY_8 &&( action == GLFW_PRESS || action == GLFW_REPEAT)) {
+    horizont_bool= true;
+    updateView();
+    std::cout <<"pressed '8' for horizontal flip \n";
+  }
+  else if (key == GLFW_KEY_9 &&( action == GLFW_PRESS || action == GLFW_REPEAT)) {
+    vert_bool = true;
+    updateView();
+    std::cout <<"pressed '9' for vertical flip \n";
+  }
+  else if (key == GLFW_KEY_7 &&( action == GLFW_PRESS || action == GLFW_REPEAT)) {
+    grey_bool = true;
+    updateView();
+    std::cout <<"pressed '7' for greyscale \n";
+  }
+
 }
 
 //handle delta mouse movement input
@@ -492,6 +522,10 @@ void ApplicationSolar::initializeShaderPrograms() {
                                            m_resource_path + "shaders/quad.frag"});
 
   m_shaders.at("quad").u_locs["ColorTex"] = -1;
+  m_shaders.at("quad").u_locs["grey_bool"] = -1;
+  m_shaders.at("quad").u_locs["horizont_bool"] = -1;
+  m_shaders.at("quad").u_locs["vert_bool"] = -1;
+  //m_shaders.at("quad").u_locs["blur_bool"] = -1;
 
 
 }
@@ -564,10 +598,6 @@ void ApplicationSolar::initializeGeometry() {
     glVertexAttribPointer(1,3,GL_FLOAT, GL_FALSE,(6*sizeof(float)),(GLvoid*)uintptr_t(sizeof(float)*3));
 
     star_object.draw_mode = GL_POINTS;
-
-
-
-
   }
 
 
