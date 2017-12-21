@@ -215,7 +215,7 @@ void ApplicationSolar::initializeQuad(){
 
   glBindBuffer(GL_ARRAY_BUFFER, quad.vertex_BO);
 
-  glBufferData(GL_ARRAY_BUFFER, (sizeof(float)*20), Quad_vector.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, Quad_vector.size()*sizeof(float), Quad_vector.data(), GL_STATIC_DRAW);
 
   // activate first attribute on gpu
   glEnableVertexAttribArray(0);
@@ -223,7 +223,7 @@ void ApplicationSolar::initializeQuad(){
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,(5*sizeof(float)),0);
 
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,(5*sizeof(float)),(void*)3);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,(5*sizeof(float)),(GLvoid*)uintptr_t(sizeof(float)*3));
   // activate first attribute on gpu
 
   quad.draw_mode = GL_TRIANGLE_STRIP;
