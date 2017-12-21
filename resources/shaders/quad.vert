@@ -15,27 +15,26 @@ out vec2 pass_TexCoord;
 
 void main(void)
 {
+
+gl_Position = vec4(in_Position, 1.0);
+
 	if(horizont_bool == false){
 		if(vert_bool == false){
-			gl_Position = vec4(in_Position, 1.0);
+			pass_TexCoord = in_TexCoord;
 		}
 		else{
-			in_Position.y * -1.0;
-			gl_Position = vec4(in_Position, 1.0);
+			pass_TexCoord = in_TexCoord * vec2(1.0,-1.0);
 		}
 	}
 	else{
 		if(vert_bool == false){
-			in_Position.x * -1.0;
-			gl_Position = vec4(in_Position, 1.0);
+			pass_TexCoord = in_TexCoord * vec2(-1.0,1.0);
 		}
 		else{
-			in_Position.x * -1.0;
-			in_Position.y * -1.0;
-			gl_Position = vec4(in_Position, 1.0);
+			pass_TexCoord = in_TexCoord * vec2(-1.0,-1.0);
 		}
 	}
 
-	pass_TexCoord = in_TexCoord;
+//	pass_TexCoord = in_TexCoord;
 
 }

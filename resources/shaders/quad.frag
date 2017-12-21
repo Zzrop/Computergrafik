@@ -17,5 +17,4 @@ void main(void)
 	else{
 		out_Color = vec4(pass_TexCoord,0.0,0.0);
 	}
-
 }
