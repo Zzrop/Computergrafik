@@ -10,10 +10,10 @@
 // create implementation here
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
- 
-#include <cstdint> 
-#include <cstring> 
-#include <stdexcept> 
+
+#include <cstdint>
+#include <cstring>
+#include <stdexcept>
 
 namespace texture_loader {
 pixel_data file(std::string const& file_name) {
@@ -61,4 +61,4 @@ pixel_data file(std::string const& file_name) {
   return pixel_data{texture_data, pixel_format, GL_UNSIGNED_BYTE, std::size_t(width), std::size_t(height)};
 }
 
-};
+}

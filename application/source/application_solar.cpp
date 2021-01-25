@@ -331,7 +331,6 @@ void ApplicationSolar::render() const {
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D, texture_object_container[k]);
       glUniform1i(color_sampler_location, 0);
-
       upload_moon_transforms(i.second);
       color_planets(Planet_Colors.at("Mond"));
 
